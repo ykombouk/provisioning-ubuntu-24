@@ -1,17 +1,12 @@
 #cloud-config
 autoinstall:
-    version: 1
-    reporting:
-        hook:
-            type: webhook
-            endpoint: http://example.com/endpoint/path
-    early-commands:
-        - ping -c1 198.162.1.1
-    locale: en_US
-    keyboard:
-        layout: gb
-        variant: dvorak
-    network:
+  version: 1
+    
+  locale: en_US.UTF-8
+  keyboard:
+        layout: us
+        variant:
+  network:
         network:
             version: 2
             ethernets:
@@ -27,40 +22,27 @@ autoinstall:
                         - enp4s0
                     parameters:
                         mode: active-backup
-                        primary: enp3s0
-    proxy: http://squid.internal:3128/
-    apt:
-        primary:
-            - arches: [default]
-              uri: http://repo.internal/
-        sources:
-            my-ppa.list:
-                source: "deb http://ppa.launchpad.net/curtin-dev/test-archive/ubuntu $RELEASE main"
-                keyid: B59D 5F15 97A5 04B7 E230  6DCA 0620 BBCF 0368 3F77
-    storage:
-        layout:
-            name: lvm
-    identity:
-        hostname: hostname
-        username: username
-        password: $crypted_pass
-    ssh:
-        install-server: yes
-        authorized-keys:
-          - $key
-        allow-pw: no
-    snaps:
+                        primary: enp3s0      
+  identity:
+    hostname: custom-ubuntu
+    username: michel
+    password: $6$brNXMqMz1o8J852W$AJ3lIu1Vw9Piwlol2Y.ohEUcI85O5rhOO1AiskTiCOVFzKWn2v1k4GwPjiB7aCFbYvwew3S0Hhf.HU9uZfLvX1 
+  storage:
+    layout:
+      name: lvm
+  bootloader:
+    install: true
+    grub:
+      timeout: 5
+      cmdline: "quiet splash"
+  user-data:
+    disable_root: false
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDXoY8mMFKoXCPtZzpnyVABARscpaH5VKsjK0LOzoUvbElf9QMYYw7YA/QDk92MA7E5HLEGdX6R9NonoOyI9YABOg55wmVqfsGw05pnlrqtdTcI1Pt1ERzh7eMFK70+bRYsgyMJYLPiRLfB3dr3Ns4/q7PbsRRq8i6AX9BPtdTdzw== michelmougoue29@gmail.com
+    snaps:  
         - name: go
           channel: 1.20/stable
           classic: true
-    debconf-selections: |
-        bind9      bind9/run-resolvconf    boolean false
-    packages:
-        - libreoffice
-        - dns-server^
-    user-data:
-        disable_root: false
-    late-commands:
-        - sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=30/' /target/etc/default/grub
-    error-commands:
-        - tar c /var/log/installer | nc 192.168.0.1 1000
+  late-commands:
+        - sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=30/' /target/etc/default/grub     
+
